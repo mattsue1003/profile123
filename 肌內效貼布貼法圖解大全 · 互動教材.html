@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>肌內效貼布貼法圖解大全 · 互動教材</title>
+<style>
+/* ===== 設計 token ===== */
+:root{
+  --orange:#E8552D; --amber:#F4A93C; --teal:#028090; --ink:#12343B;
+  --cloud:#F4F8F8; --green:#2C9E6E; --gray:#5A6A6E; --line:#DCE8E8;
+  --font:'Noto Sans TC','Microsoft JhengHei','PingFang TC',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:var(--font);color:var(--ink);background:#0c1f24;}
+body{overflow:hidden;}
+
+/* ===== APP 容器 ===== */
+#app{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+#deck{position:relative;width:100%;height:100%;}
+
+/* ===== 投影片基礎（桌機：16:9 翻頁）===== */
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  background:#fff;
+  opacity:0;visibility:hidden;
+  transform:translateX(40px);
+  transition:opacity .4s ease, transform .4s ease, visibility .4s;
+  overflow:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:translateX(0);z-index:2;}
+.slide.prev{transform:translateX(-40px);}
+
+/* 桌機把每張限制成 16:9 置中 */
+@media (min-aspect-ratio:13/10){
+  #app{padding:0;}
+  #deck{
+    width:min(100vw, calc(100vh * 16 / 9));
+    height:min(100vh, calc(100vw * 9 / 16));
+    aspect-ratio:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+  }
+
+}
+
+.pad{padding:clamp(20px,3.5vw,52px);height:100%;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ===== 共用文字 ===== */
+.eyebrow{font-size:clamp(11px,1.1vw,14px);font-weight:700;letter-spacing:2px;color:var(--teal);margin-bottom:6px;}
+.accent-orange-txt{color:var(--orange);} .accent-teal-txt{color:var(--teal);}
+.accent-amber-txt{color:var(--amber);} .accent-ink-txt{color:var(--ink);}
+.h2{font-size:clamp(20px,2.9vw,38px);font-weight:800;line-height:1.15;margin-bottom:clamp(12px,1.8vw,22px);letter-spacing:.5px;}
+.lead{font-size:clamp(13px,1.25vw,17px);line-height:1.65;color:var(--ink);margin-bottom:12px;}
+.tiny{font-size:clamp(10px,.95vw,12px);color:var(--gray);font-style:italic;margin-top:8px;}
+
+/* ===== 封面 ===== */
+.cover{height:100%;background:var(--ink);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vw,72px);position:relative;overflow:hidden;}
+.cover::before{content:"";position:absolute;width:46%;aspect-ratio:1;border-radius:50%;background:var(--teal);opacity:.45;top:-12%;right:-8%;}
+.cover::after{content:"";position:absolute;width:32%;aspect-ratio:1;border-radius:50%;background:var(--orange);opacity:.4;bottom:-10%;right:6%;}
+.cover-badge{color:var(--amber);font-weight:700;font-size:clamp(14px,1.6vw,20px);margin-bottom:14px;position:relative;}
+.cover-title{font-size:clamp(34px,6.2vw,72px);font-weight:900;line-height:1.08;letter-spacing:1px;position:relative;}
+.cover-sub{color:var(--cloud);font-size:clamp(14px,1.7vw,21px);margin-top:18px;position:relative;}
+.cover-who{color:#B8C9CC;font-size:clamp(11px,1.2vw,15px);margin-top:auto;position:relative;}
+.cover-hint{color:#7e979b;font-size:clamp(10px,1vw,13px);margin-top:18px;position:relative;}
+
+/* ===== section 分隔頁 ===== */
+.section-slide{height:100%;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vw,72px);position:relative;overflow:hidden;color:#fff;}
+.section-slide::after{content:"";position:absolute;width:38%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.14);bottom:-12%;right:-6%;}
+.accent-orange{background:var(--orange);} .accent-teal{background:var(--teal);}
+.accent-amber{background:var(--amber);color:var(--ink);} .accent-ink{background:var(--ink);}
+.section-label{font-weight:800;letter-spacing:4px;font-size:clamp(13px,1.5vw,18px);opacity:.85;position:relative;}
+.section-title{font-size:clamp(30px,5.4vw,60px);font-weight:900;margin-top:10px;position:relative;}
+.section-sub{font-size:clamp(14px,1.6vw,20px);margin-top:14px;opacity:.92;position:relative;}
+
+/* ===== 圖+文 split ===== */
+.split{flex:1;display:flex;gap:clamp(16px,2.4vw,34px);min-height:0;align-items:stretch;}
+.split-img{flex:0 0 42%;display:flex;align-items:center;justify-content:center;min-height:0;}
+.split-img.sm{flex:0 0 36%;}
+.split-img svg{width:100%;height:100%;max-height:100%;object-fit:contain;}
+.diagram{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.diagram svg{width:100%;height:auto;max-height:100%;}
+.split-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;overflow:auto;}
+
+/* ===== 兩欄卡 ===== */
+.two-col{flex:1;display:flex;gap:clamp(14px,2vw,26px);min-height:0;}
+.col{flex:1;background:var(--cloud);border-radius:14px;padding:clamp(16px,2vw,26px);border-top:5px solid var(--teal);}
+.col-teal{border-top-color:var(--teal);} .col-orange{border-top-color:var(--orange);background:#FCF1EC;}
+.col-h{font-size:clamp(15px,1.6vw,21px);font-weight:800;margin-bottom:12px;}
+.col-teal .col-h{color:var(--teal);} .col-orange .col-h{color:var(--orange);}
+.col ul{list-style:none;}
+.col li{font-size:clamp(12px,1.2vw,16px);line-height:1.5;padding-left:18px;position:relative;margin-bottom:9px;color:var(--ink);}
+.col li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5;}
+.col-teal li::before{background:var(--teal);} .col-orange li::before{background:var(--orange);}
+.notebar{margin-top:14px;background:var(--ink);color:var(--cloud);padding:14px 18px;border-radius:12px;font-size:clamp(11px,1.15vw,15px);line-height:1.55;}
+.notebar b{color:var(--amber);}
+
+/* ===== mini cards (擺位三) ===== */
+.minicards{display:flex;gap:10px;margin-top:14px;}
+.mc{flex:1;background:var(--cloud);border-radius:12px;padding:12px;border-top:4px solid;}
+.mc-teal{border-color:var(--teal);} .mc-amber{border-color:var(--amber);} .mc-orange{border-color:var(--orange);}
+.mc b{display:block;font-size:clamp(13px,1.3vw,16px);margin-bottom:6px;}
+.mc-teal b{color:var(--teal);} .mc-amber b{color:#D9942B;} .mc-orange b{color:var(--orange);}
+.mc span{font-size:clamp(10px,1vw,13px);color:var(--gray);line-height:1.45;}
+
+/* ===== 機轉清單 ===== */
+.mechlist{display:flex;flex-direction:column;gap:10px;}
+.mech{display:flex;gap:12px;background:var(--cloud);border-radius:12px;padding:12px 14px;align-items:flex-start;}
+.mdot{flex:0 0 14px;height:14px;border-radius:50%;margin-top:5px;}
+.mech b{font-size:clamp(13px,1.3vw,17px);}
+.mech p{font-size:clamp(11px,1.1vw,14px);color:var(--gray);line-height:1.45;margin-top:3px;}
+.keybar{margin-top:14px;background:var(--ink);color:var(--cloud);padding:12px 18px;border-radius:10px;font-size:clamp(11px,1.15vw,15px);line-height:1.5;}
+.keybar b{color:var(--amber);}
+.keybar.light{background:var(--cloud);color:var(--ink);border-left:5px solid var(--orange);}
+.keybar.light b{color:var(--orange);}
+
+/* ===== QA ===== */
+.qa-list{flex:1;display:flex;flex-direction:column;gap:12px;justify-content:center;}
+.qa-row{background:var(--cloud);border-left:5px solid var(--teal);border-radius:10px;padding:14px 18px;}
+.qa-q{font-size:clamp(14px,1.5vw,19px);font-weight:800;margin-bottom:7px;}
+.qa-q span{font-weight:900;margin-right:6px;}
+.qa-a{font-size:clamp(11px,1.15vw,15px);color:var(--gray);line-height:1.55;}
+
+/* ===== 決策表 ===== */
+.dtable{width:100%;border-collapse:collapse;font-size:clamp(10px,1.05vw,14px);}
+.dtable th{background:var(--ink);color:#fff;padding:8px 6px;font-weight:700;text-align:left;}
+.dtable td{padding:9px 7px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.dtable tr:nth-child(even) td{background:var(--cloud);}
+.d-aim{font-weight:800;white-space:nowrap;padding-left:10px!important;}
+.d-dir{color:var(--ink);}
+
+/* ===== info card (貼法/關卡) ===== */
+.infocard.dark{background:var(--ink);border-radius:12px;padding:14px 18px;margin-bottom:14px;}
+.infocard.tight{padding:11px 16px;}
+.ic-row{display:flex;gap:12px;padding:5px 0;font-size:clamp(11px,1.15vw,15px);line-height:1.4;}
+.ic-row span{flex:0 0 88px;color:var(--amber);font-weight:700;}
+.ic-row b{color:var(--cloud);font-weight:500;}
+.ic-row.hi b{color:#fff;font-weight:700;}
+.sub-h{font-size:clamp(13px,1.35vw,17px);font-weight:800;color:var(--teal);margin-bottom:8px;}
+.steps{list-style:none;counter-reset:st;display:flex;flex-direction:column;gap:8px;}
+.steps li{counter-increment:st;position:relative;padding-left:34px;font-size:clamp(11px,1.2vw,15px);line-height:1.45;min-height:24px;display:flex;align-items:center;}
+.steps li::before{content:counter(st);position:absolute;left:0;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.passbar{margin-top:12px;background:#E2F2EE;border-radius:10px;padding:11px 16px;font-size:clamp(11px,1.15vw,15px);color:var(--ink);}
+.passbar::before{content:"過關標準　";font-weight:800;color:var(--teal);}
+.tipbar{margin-top:11px;background:var(--cloud);border-radius:10px;padding:10px 15px;font-size:clamp(10px,1.05vw,13px);color:var(--gray);}
+.tipbar b{color:var(--orange);}
+.level-eye{color:var(--orange);}
+
+/* ===== 膝蓋對比 ===== */
+.kc-wrap{flex:1;display:flex;gap:clamp(14px,2vw,26px);min-height:0;}
+.kc-img{flex:0 0 30%;display:flex;align-items:center;}
+.kc-img svg{width:100%;height:auto;max-height:100%;}
+.kc-cards{flex:1;display:flex;gap:10px;min-width:0;}
+.kc-card{flex:1;background:var(--cloud);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.kc-head{color:#fff;padding:10px 12px;font-size:clamp(11px,1.15vw,14px);font-weight:800;display:flex;align-items:center;gap:8px;line-height:1.2;}
+.kc-tag{background:rgba(255,255,255,.25);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 24px;font-size:14px;}
+.kc-li{list-style:none;padding:11px 13px;flex:1;}
+.kc-li li{font-size:clamp(9.5px,1vw,12.5px);line-height:1.5;margin-bottom:5px;color:var(--ink);}
+.kc-when{background:#fff;margin:0 10px 10px;border-radius:8px;padding:8px 10px;font-size:clamp(9px,.95vw,11.5px);color:var(--gray);}
+.kc-when::before{content:"什麼時候　";font-weight:700;color:var(--ink);}
+.askbar{margin-top:12px;background:var(--cloud);border-left:5px solid var(--orange);border-radius:8px;padding:11px 16px;font-size:clamp(11px,1.15vw,14px);font-weight:700;color:var(--orange);}
+
+/* ===== flow / four / troubleshoot ===== */
+.flow{flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.flow-row{display:flex;gap:14px;align-items:center;background:var(--cloud);border-radius:10px;padding:12px 16px;}
+.flow-n{flex:0 0 38px;height:38px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.flow-row:nth-child(even) .flow-n{background:var(--teal);}
+.flow-t b{font-size:clamp(13px,1.4vw,18px);} .flow-t span{display:block;font-size:clamp(10px,1.1vw,14px);color:var(--gray);margin-top:2px;}
+.four{flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;}
+.four-row{display:flex;gap:14px;background:var(--cloud);border-radius:10px;padding:13px 16px;align-items:center;}
+.four-k{flex:0 0 70px;font-size:clamp(15px,1.6vw,20px);font-weight:800;color:var(--teal);}
+.four-v{font-size:clamp(10px,1.1vw,14px);color:var(--ink);line-height:1.45;}
+.keybar.dark{background:var(--ink);}
+.ts-wrap{flex:1;display:flex;gap:clamp(14px,2vw,26px);min-height:0;}
+.ts-left{flex:0 0 42%;background:var(--ink);border-radius:12px;padding:16px 18px;color:#fff;display:flex;flex-direction:column;}
+.ts-h{font-weight:800;color:var(--amber);margin-bottom:12px;font-size:clamp(13px,1.4vw,17px);}
+.ts-right .ts-h{color:var(--teal);}
+.ts-test{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;font-size:clamp(11px,1.15vw,14px);line-height:1.4;color:var(--cloud);}
+.ts-test span{flex:0 0 24px;height:24px;border-radius:50%;background:var(--amber);color:var(--ink);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.ts-ok{margin-top:auto;font-size:clamp(11px,1.1vw,14px);font-weight:700;color:#8FD8C8;}
+.ts-right{flex:1;display:flex;flex-direction:column;gap:8px;}
+.ts-row{background:var(--cloud);border-radius:8px;padding:9px 13px;}
+.ts-q{font-size:clamp(11px,1.15vw,14px);font-weight:800;color:var(--orange);}
+.ts-a{font-size:clamp(9.5px,1.05vw,13px);color:var(--ink);margin-top:3px;line-height:1.4;}
+
+/* ===== remember / end ===== */
+.remember-slide{height:100%;background:var(--ink);color:#fff;padding:clamp(28px,4.5vw,64px);display:flex;flex-direction:column;justify-content:center;}
+.eyebrow.light{color:var(--amber);}
+.rm-title{font-size:clamp(24px,3.6vw,40px);font-weight:800;margin-bottom:24px;}
+.rm-row{display:flex;gap:16px;align-items:center;margin-bottom:14px;}
+.rm-n{flex:0 0 40px;height:40px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.rm-row div:last-child{font-size:clamp(13px,1.5vw,19px);color:var(--cloud);}
+.end-slide{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;text-align:center;}
+.end-mark{font-size:clamp(40px,6vw,72px);color:var(--orange);margin-bottom:14px;}
+.end-title{font-size:clamp(28px,4.6vw,52px);font-weight:900;}
+.end-sub{font-size:clamp(14px,1.7vw,20px);color:var(--gray);margin-top:14px;}
+.end-who{font-size:clamp(12px,1.3vw,16px);color:var(--teal);font-weight:700;margin-top:24px;}
+
+/* ===== TOC slide(內頁) ===== */
+.toc-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;overflow:auto;padding-top:6px;}
+.toc-card{display:flex;gap:12px;align-items:center;background:var(--cloud);border-radius:10px;padding:12px 16px;cursor:pointer;transition:.2s;}
+.toc-card:hover{background:#e6efef;transform:translateX(3px);}
+.toc-card .tnum{flex:0 0 34px;height:34px;border-radius:8px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.toc-card b{font-size:clamp(13px,1.3vw,16px);} .toc-card span{font-size:clamp(10px,1vw,13px);color:var(--gray);display:block;margin-top:2px;}
+
+/* ===== 控制 UI ===== */
+#topbar{position:fixed;top:0;left:0;right:0;height:42px;background:rgba(18,52,59,.92);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:50;color:#fff;}
+.tb-title{font-size:13px;font-weight:700;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tb-prog{font-size:12px;opacity:.8;font-variant-numeric:tabular-nums;flex:0 0 auto;}
+.navbtn{position:fixed;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:none;background:rgba(18,52,59,.55);color:#fff;font-size:28px;cursor:pointer;z-index:40;display:flex;align-items:center;justify-content:center;transition:.2s;line-height:1;}
+.navbtn:hover{background:var(--teal);}
+#prevBtn{left:14px;} #nextBtn{right:14px;}
+#progbar{position:fixed;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,.12);z-index:50;}
+#progfill{height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));width:0;transition:width .3s;}
+#menuBtn{position:fixed;bottom:18px;right:18px;width:52px;height:52px;border-radius:50%;border:none;background:var(--orange);color:#fff;font-size:22px;cursor:pointer;z-index:60;box-shadow:0 6px 20px rgba(232,85,45,.5);}
+#tocPanel{position:fixed;top:0;right:-340px;width:320px;max-width:85vw;height:100%;background:#fff;z-index:80;transition:right .3s;overflow-y:auto;box-shadow:-10px 0 40px rgba(0,0,0,.3);}
+#tocPanel.open{right:0;}
+.toc-head{position:sticky;top:0;background:var(--ink);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:17px;}
+.toc-head button{background:none;border:none;color:#fff;font-size:26px;cursor:pointer;line-height:1;}
+#tocList{padding:8px;}
+.toc-item{padding:11px 16px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;gap:10px;align-items:center;transition:.15s;}
+.toc-item:hover{background:var(--cloud);}
+.toc-item .ti-n{flex:0 0 28px;color:var(--gray);font-size:12px;font-variant-numeric:tabular-nums;}
+.toc-item.sec{background:var(--cloud);font-weight:800;color:var(--orange);margin-top:6px;}
+.toc-item.cur{background:#E2F2EE;font-weight:700;}
+#tocOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:70;opacity:0;visibility:hidden;transition:.3s;}
+#tocOverlay.open{opacity:1;visibility:visible;}
+
+/* ===== 張力滑桿 ===== */
+.tension-wrap{flex:1;display:flex;gap:clamp(20px,3vw,44px);align-items:center;min-height:0;}
+.tension-left{flex:1;}
+.t-readout{display:flex;align-items:baseline;gap:16px;margin-bottom:20px;}
+.t-pct{font-size:clamp(48px,7vw,92px);font-weight:900;color:var(--orange);line-height:1;font-variant-numeric:tabular-nums;}
+.t-pct span{font-size:.4em;}
+.t-name{font-size:clamp(18px,2.4vw,32px);font-weight:800;color:var(--ink);}
+.t-slider{width:100%;height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,#7FC8C2,#028090 25%,#F6C76B 45%,#F4A93C 55%,#E8552D 78%,#C44B2A);outline:none;cursor:pointer;}
+.t-slider::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;border:4px solid var(--ink);cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.3);}
+.t-slider::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:#fff;border:4px solid var(--ink);cursor:pointer;}
+.t-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--gray);margin-top:8px;font-variant-numeric:tabular-nums;}
+.t-bar{display:none;}
+.tension-right{flex:0 0 38%;}
+.t-card{background:var(--cloud);border-radius:14px;padding:20px;border-top:6px solid var(--orange);transition:border-color .25s;}
+.t-use{font-size:clamp(16px,1.9vw,24px);font-weight:800;color:var(--ink);margin-bottom:10px;}
+.t-how{font-size:clamp(12px,1.25vw,16px);color:var(--ink);line-height:1.5;margin-bottom:8px;}
+.t-eg{font-size:clamp(11px,1.1vw,14px);color:var(--gray);}
+.t-note{margin-top:14px;font-size:clamp(11px,1.15vw,14px);color:var(--gray);line-height:1.5;}
+.t-note b{color:var(--orange);}
+
+/* ============================================ */
+/* ===== 手機 9:16 直式：改為滾動模式 ===== */
+/* ============================================ */
+@media (max-aspect-ratio:13/10){
+  body{overflow-y:auto;overflow-x:hidden;background:#fff;}
+  #app{position:static;display:block;height:auto;}
+  #deck{position:static;width:100%;height:auto;aspect-ratio:auto;box-shadow:none;}
+  .slide{
+    position:relative;inset:auto;
+    opacity:1;visibility:visible;transform:none;
+    min-height:auto;width:100%;
+    border-bottom:1px solid #eee;
+    transition:none;
+    margin-bottom:0;
+  }
+  .slide.active,.slide.prev{transform:none;}
+  /* 滾動模式下各頁自然高度 */
+  .pad{height:auto;padding:24px 18px 40px;}
+  /* split 改直排 */
+  .split,.two-col,.kc-wrap,.ts-wrap,.tension-wrap,.kc-cards{flex-direction:column;}
+  .split-img,.split-img.sm,.kc-img{flex:0 0 auto;width:100%;max-width:380px;margin:0 auto 16px;}
+  .split-img svg,.kc-img svg,.diagram svg{max-height:320px;}
+  .split-body{overflow:visible;}
+  .minicards{flex-direction:column;}
+  .tension-right{flex:0 0 auto;width:100%;margin-top:20px;}
+  .kc-cards{gap:12px;}
+  .toc-grid{grid-template-columns:1fr;overflow:visible;}
+  /* 全幅頁面 */
+  .cover,.section-slide,.remember-slide,.end-slide{min-height:88vh;}
+  .dtable{font-size:12px;}
+  .ic-row span{flex:0 0 76px;}
+  /* 手機隱藏翻頁箭頭，顯示回頂 */
+  .navbtn{display:none;}
+  #topbar{position:fixed;}
+  #deck{padding-top:42px;}
+  #progbar{display:none;}
+  .ts-left{flex:0 0 auto;}
+}
+
+/* 大螢幕滾動容器隱藏卷軸但仍可滾 split-body */
+.split-body::-webkit-scrollbar{width:5px;}
+.split-body::-webkit-scrollbar-thumb{background:#cdddd0;border-radius:3px;}
+
+@media (prefers-reduced-motion:reduce){
+  .slide{transition:opacity .01s;}
+}
+
+
+/* ===== 桌機覆寫(置於最末以確保優先) ===== */
+@media (min-aspect-ratio:13/10){
+  /* ===== 桌機排版優化：垂直置中、放大字級、消除底部空白 ===== */
+  .pad{justify-content:center;padding:clamp(28px,4vw,60px) clamp(32px,4.5vw,68px);}
+  .h2{font-size:clamp(28px,3.4vw,48px);margin-bottom:clamp(20px,2.6vw,34px);}
+  .eyebrow{font-size:clamp(13px,1.3vw,17px);margin-bottom:8px;}
+  /* 內容區不再強制撐滿，跟著標題一起垂直置中 */
+  .split,.two-col,.kc-wrap,.ts-wrap,.tension-wrap,.qa-list,.flow,.four,.toc-grid{flex:0 1 auto;}
+  .split{align-items:center;}
+  .split-img{flex:0 0 45%;}
+  .split-img.sm{flex:0 0 38%;}
+  .split-img svg,.diagram svg,.kc-img svg{max-height:64vh;}
+  /* 字級全面放大 */
+  .lead{font-size:clamp(15px,1.5vw,20px);}
+  .col-h{font-size:clamp(17px,1.8vw,24px);}
+  .col li{font-size:clamp(14px,1.4vw,18px);margin-bottom:11px;}
+  .notebar,.keybar{font-size:clamp(13px,1.3vw,17px);padding:16px 22px;}
+  .qa-list{gap:18px;}
+  .qa-row{padding:18px 24px;}
+  .qa-q{font-size:clamp(17px,1.8vw,23px);}
+  .qa-a{font-size:clamp(13px,1.4vw,18px);}
+  .steps li{font-size:clamp(13.5px,1.4vw,18px);min-height:30px;padding-left:40px;}
+  .steps li::before{width:28px;height:28px;font-size:15px;}
+  .steps{gap:11px;}
+  .ic-row{font-size:clamp(13px,1.35vw,17px);padding:7px 0;}
+  .ic-row span{flex:0 0 104px;}
+  .infocard.dark{padding:18px 24px;margin-bottom:18px;}
+  .sub-h{font-size:clamp(15px,1.55vw,20px);margin-bottom:12px;}
+  .tipbar{font-size:clamp(12px,1.2vw,15px);padding:12px 18px;}
+  .passbar{font-size:clamp(13px,1.3vw,17px);padding:13px 20px;}
+  .mech b{font-size:clamp(15px,1.55vw,20px);}
+  .mech p{font-size:clamp(12.5px,1.25vw,16px);}
+  .mech{padding:14px 18px;}
+  .mc b{font-size:clamp(14px,1.5vw,19px);}
+  .mc span{font-size:clamp(11.5px,1.15vw,15px);}
+  .dtable{font-size:clamp(12.5px,1.25vw,16px);}
+  .dtable td{padding:11px 9px;}
+  .dtable th{padding:10px 9px;}
+  .flow{gap:13px;}
+  .flow-row{padding:15px 20px;}
+  .flow-t b{font-size:clamp(15px,1.65vw,21px);}
+  .flow-t span{font-size:clamp(12px,1.3vw,16px);}
+  .four{gap:13px;}
+  .four-row{padding:16px 20px;}
+  .four-k{font-size:clamp(17px,1.85vw,24px);}
+  .four-v{font-size:clamp(12.5px,1.3vw,16px);}
+  .kc-li li{font-size:clamp(11px,1.1vw,14px);margin-bottom:6px;}
+  .kc-head{font-size:clamp(12px,1.25vw,15px);}
+  .kc-when{font-size:clamp(10px,1.05vw,13px);}
+  .askbar{font-size:clamp(12.5px,1.3vw,16px);}
+  .ts-test{font-size:clamp(12.5px,1.35vw,16px);}
+  .ts-q{font-size:clamp(12.5px,1.3vw,16px);}
+  .ts-a{font-size:clamp(11px,1.15vw,14px);}
+  .ts-h{font-size:clamp(15px,1.55vw,19px);}
+  .toc-grid{align-content:center;gap:16px;grid-template-columns:1fr 1fr;}
+  .toc-card{padding:20px 24px;}
+  .toc-card b{font-size:clamp(15px,1.5vw,19px);}
+  .toc-card span{font-size:clamp(11.5px,1.15vw,14px);}
+  .toc-card .tnum{flex:0 0 40px;height:40px;font-size:15px;}
+  .tension-wrap{gap:clamp(28px,4vw,56px);}
+  .t-note{font-size:clamp(12.5px,1.3vw,16px);}
+  .t-use{font-size:clamp(18px,2.1vw,27px);}
+  .t-how{font-size:clamp(13px,1.4vw,18px);}
+  .t-eg{font-size:clamp(12px,1.2vw,15px);}
+  .t-card{padding:24px;}
+
+}
+
+
+/* ===== 影片 slide ===== */
+.vsplit{flex:1;display:flex;gap:clamp(16px,2.4vw,34px);min-height:0;align-items:stretch;}
+.vid-wrap{flex:0 0 52%;display:flex;flex-direction:column;gap:10px;min-width:0;justify-content:center;}
+.vid-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.vid-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.vid-link{font-size:clamp(11px,1.1vw,14px);color:var(--teal);text-decoration:none;font-weight:700;}
+.vid-link:hover{text-decoration:underline;}
+.vbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:0;overflow:auto;}
+.vcard{background:var(--cloud);border-radius:14px;padding:clamp(14px,1.8vw,24px);border-top:5px solid var(--orange);}
+.vcard-h{font-weight:800;color:var(--orange);margin-bottom:10px;font-size:clamp(15px,1.6vw,21px);}
+.vlist{list-style:none;}
+.vlist li{padding-left:18px;position:relative;margin-bottom:8px;line-height:1.5;font-size:clamp(12px,1.2vw,16px);color:var(--ink);}
+.vlist li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--orange);}
+.vnote{background:var(--ink);color:var(--cloud);padding:12px 16px;border-radius:10px;font-size:clamp(11px,1.15vw,15px);line-height:1.6;}
+.vnote b{color:var(--amber);}
+.vsrc{font-size:clamp(10px,.95vw,12px);color:var(--gray);}
+.vsrc a{color:var(--teal);font-weight:700;text-decoration:none;}
+.vsrc a:hover{text-decoration:underline;}
+/* ===== 出處總整理 ===== */
+.srclist{flex:0 1 auto;display:flex;flex-direction:column;gap:9px;margin:6px 0 4px;overflow:auto;}
+.src-row{display:flex;gap:14px;align-items:flex-start;background:var(--cloud);border-left:5px solid var(--orange);border-radius:10px;padding:11px 16px;}
+.src-part{flex:0 0 84px;font-weight:800;color:var(--orange);font-size:clamp(12px,1.25vw,16px);}
+.src-main{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.src-main a{font-size:clamp(12px,1.25vw,16px);font-weight:700;color:var(--ink);text-decoration:none;line-height:1.4;word-break:break-word;}
+.src-main a:hover{color:var(--teal);text-decoration:underline;}
+.src-ch{font-size:clamp(10px,1.05vw,13px);color:var(--gray);}
+@media (min-aspect-ratio:13/10){
+  .src-part{flex:0 0 100px;}
+  .src-row{padding:13px 20px;}
+}
+@media (max-aspect-ratio:13/10){
+  .srclist{overflow:visible;}
+}
+@media (max-aspect-ratio:13/10){
+  .vsplit{flex-direction:column;}
+  .vid-wrap{flex:0 0 auto;width:100%;}
+  .vbody{overflow:visible;}
+}
+@media (min-aspect-ratio:13/10){
+  .vsplit{flex:0 1 auto;align-items:center;}
+  .vcard-h{font-size:clamp(17px,1.8vw,23px);}
+  .vlist li{font-size:clamp(14px,1.4vw,18px);margin-bottom:10px;}
+  .vnote{font-size:clamp(13px,1.3vw,17px);padding:14px 20px;}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="deck"><section class="slide" data-idx="0" data-type="cover"><div class="cover">
+      <div class="cover-badge">KINESIO TAPING · 互動教材</div>
+      <h1 class="cover-title">肌內效貼布<br>貼法圖解大全</h1>
+      <p class="cover-sub">原理 · 剪裁 · 張力 · 四大部位貼法 · 影片教學</p>
+      <p class="cover-who">適合對象：一般民眾自我保健學習　｜　愛迪樂健康促進團隊</p>
+      <div class="cover-hint">點選右下角目錄 ☰ 快速跳轉　·　← → 或滑動翻頁</div>
+    </div></section>
+<section class="slide" data-idx="1" data-type="toc"><div class="pad"><div class="eyebrow">CONTENTS</div><h2 class="h2">本教材內容</h2>
+      <div class="toc-grid" id="tocGrid"></div></div></section>
+<section class="slide" data-idx="2" data-type="section"><div class="section-slide accent-teal">
+      <div class="section-label">PART 0</div>
+      <h2 class="section-title">認識肌內效</h2>
+      <p class="section-sub">它是什麼 · 怎麼選 · 為什麼有效</p>
+    </div></section>
+<section class="slide" data-idx="3" data-type="content"><div class="pad"><div class="eyebrow accent-teal-txt">認識 ①</div><h2 class="h2">白貼 vs 肌內效：怎麼選？</h2>
+      <div class="two-col"><div class="col col-teal">
+      <div class="col-h">肌內效（彈性）</div>
+      <ul><li>支撐軟組織、保留活動度</li><li>提供感覺回饋、調節疼痛</li><li>消腫引流、輔助肌肉出力</li><li>可貼 3–5 天、隨身體活動</li></ul></div><div class="col col-orange">
+      <div class="col-h">白貼（剛性）</div>
+      <ul><li>機械性限制關節活動</li><li>韌帶支撐、防止扭傷</li><li>急性扭傷／回場運動穩定首選</li><li>短時間使用、不保留活動度</li></ul></div></div>
+      <div class="notebar"><b>研究：</b>止痛上兩者無顯著差異(JOSPT 2025)；要機械穩定→白貼/護具；慢性踝不穩→肌內效中等證據；急性扭傷/DOMS 證據不一致，不宜過度承諾。</div></div></section>
+<section class="slide" data-idx="4" data-type="diagram"><div class="pad"><div class="eyebrow accent-orange-txt">認識 ②</div><h2 class="h2">為什麼能止痛、促進、放鬆？</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    <text x="220" y="42" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B" text-anchor="middle">閘門控制：快訊號擋掉痛訊號</text>
+    <!-- 皮膚/貼布 -->
+    <rect x="40" y="70" width="360" height="22" rx="6" fill="#E9D8B8"/>
+    <rect x="120" y="72" width="200" height="18" rx="9" fill="#E8552D" opacity="0.85"/>
+    <text x="220" y="86" font-family="Microsoft JhengHei" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">肌內效貼布刺激皮膚</text>
+    <!-- 兩條神經 -->
+    <text x="70" y="130" font-family="Microsoft JhengHei" font-size="12.5" font-weight="bold" fill="#028090">觸/壓覺(快)</text>
+    <path d="M120 124 C180 124 200 200 250 210" stroke="#028090" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <line x1="120" y1="124" x2="240" y2="208" stroke="#fff" stroke-width="1.5" stroke-dasharray="2 6" marker-end="url(#arrow)" opacity="0.7"/>
+    <text x="60" y="178" font-family="Microsoft JhengHei" font-size="12.5" font-weight="bold" fill="#E8552D">痛覺(慢)</text>
+    <path d="M120 172 C170 172 200 200 244 214" stroke="#E8552D" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="8 6" opacity="0.6"/>
+    <!-- 閘門 -->
+    <circle cx="262" cy="212" r="30" fill="#fff" stroke="#12343B" stroke-width="2.5"/>
+    <text x="262" y="208" font-family="Microsoft JhengHei" font-size="12" fill="#12343B" text-anchor="middle" font-weight="bold">脊髓</text>
+    <text x="262" y="224" font-family="Microsoft JhengHei" font-size="12" fill="#12343B" text-anchor="middle">閘門</text>
+    <!-- 閘門擋住痛 -->
+    <text x="300" y="180" font-family="Microsoft JhengHei" font-size="22" fill="#028090" font-weight="bold">✓</text>
+    <text x="318" y="180" font-family="Microsoft JhengHei" font-size="11" fill="#028090">快訊號通過</text>
+    <text x="300" y="246" font-family="Microsoft JhengHei" font-size="20" fill="#E8552D" font-weight="bold">✕</text>
+    <text x="318" y="246" font-family="Microsoft JhengHei" font-size="11" fill="#E8552D">痛訊號被擋</text>
+    <!-- 到大腦 -->
+    <path d="M292 210 C330 210 350 150 360 120" stroke="#028090" stroke-width="5" fill="none" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <ellipse cx="375" cy="104" rx="26" ry="22" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+    <text x="375" y="108" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E" text-anchor="middle">大腦</text>
+    <!-- 結論 -->
+    <rect x="40" y="290" width="360" height="76" rx="8" fill="#EAF2F2"/>
+    <text x="60" y="316" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">貼布讓「被摸、被撐」的快訊號先抵達脊髓，</text>
+    <text x="60" y="338" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">關上痛覺閘門 → 痛的感覺被擠掉、變輕。</text>
+    <text x="60" y="358" font-family="Microsoft JhengHei" font-size="11.5" fill="#2C9E6E">＝撞到會痛時揉一揉比較舒服，同一個道理</text>
+  </svg></div></div>
+        <div class="split-body"><div class="mechlist"><div class="mech"><span class="mdot" style="background:#E8552D"></span><div><b>止痛 = 關上痛覺閘門</b><p>觸壓覺(快訊號)比痛覺(慢訊號)先到脊髓，把痛擠掉；皮膚被提起也降低組織壓力痛。</p></div></div><div class="mech"><span class="mdot" style="background:#2C9E6E"></span><div><b>促進 = 提醒肌肉出力</b><p>順肌肉方向貼，持續給「該出力」的感覺回饋，喚醒無力肌。</p></div></div><div class="mech"><span class="mdot" style="background:#F4A93C"></span><div><b>放鬆 = 給肌肉踩煞車</b><p>逆肌肉方向貼，反向牽拉降低過度活躍肌肉張力。</p></div></div><div class="mech"><span class="mdot" style="background:#028090"></span><div><b>修復 = 創造好環境(非直接)</b><p>貼布不直接修復組織：靠減痛→願意動→促循環，真正修復靠身體與運動。</p></div></div></div><div class="keybar">核心：貼布力量很小，靠皮膚感覺→神經調節，不是機械幫你出力。</div><p class="tiny">註：以上為主流理論/假說，臨床看得到效果，確切機制學界尚未完全定論。</p></div>
+      </div></div></section>
+<section class="slide" data-idx="5" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 入門</div><h2 class="h2">先看一段：肌內效怎麼貼？</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/mGm1j4D61O8?rel=0" title="先看一段：肌內效怎麼貼？" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=mGm1j4D61O8" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>撕開背紙時，記得兩端「錨點」不要拉，只貼中間段</li><li>順著肌肉方向貼，貼布長度照背紙格數抓（1 格＝5 公分）</li><li>貼好後用手掌來回摩擦活化，讓黏膠更服貼</li><li>顏色沒有療效差別，挑喜歡的就好</li></ul></div><div class="vnote"><b>適用：</b>第一次自己貼之前的入門概念　<br><b>提醒：</b>紅、癢、刺、麻立刻撕掉，不要忍</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=mGm1j4D61O8" target="_blank" rel="noopener">詹珞瑤 物理治療師（YouTube） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="6" data-type="section"><div class="section-slide accent-orange">
+      <div class="section-label">PART 1</div>
+      <h2 class="section-title">四大基本功</h2>
+      <p class="section-sub">認識材料 → 怎麼剪 → 怎麼拉 → 怎麼貼</p>
+    </div></section>
+<section class="slide" data-idx="7" data-type="diagram"><div class="pad"><div class="eyebrow accent-teal-txt">工具 ①</div><h2 class="h2">認識材料：「格」與顏色</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <text x="40" y="50" font-family="Microsoft JhengHei" font-size="14" font-weight="bold" fill="#12343B">貼布背紙上的「格」</text>
+  <rect x="40" y="66" width="360" height="64" rx="8" fill="#F0E0C8" stroke="#D9C39E" stroke-width="2"/>
+  <line x1="100" y1="70" x2="100" y2="126" stroke="#C9AE82" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="160" y1="70" x2="160" y2="126" stroke="#C9AE82" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="220" y1="70" x2="220" y2="126" stroke="#C9AE82" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="280" y1="70" x2="280" y2="126" stroke="#C9AE82" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="340" y1="70" x2="340" y2="126" stroke="#C9AE82" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <path d="M40 142 L40 152 L100 152 L100 142" stroke="#E8552D" stroke-width="2" fill="none"/>
+  <text x="70" y="170" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#E8552D" text-anchor="middle">1 格 = 5 公分</text>
+  <text x="240" y="170" font-family="Microsoft JhengHei" font-size="12" fill="#5A6A6E" text-anchor="middle">（圖為 6 格 = 30 公分）</text>
+  <text x="40" y="200" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">‧ 市售貼布寬 5 公分，背紙印有方格，照格數剪最快</text>
+  <text x="40" y="222" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">‧ 本教材每式「用量」欄已標好所需格數（多為 3–6 格）</text>
+  <text x="40" y="262" font-family="Microsoft JhengHei" font-size="14" font-weight="bold" fill="#12343B">顏色有差嗎？</text>
+  <rect x="40" y="276" width="56" height="26" rx="13" fill="#E8552D"/>
+  <rect x="104" y="276" width="56" height="26" rx="13" fill="#3E84C6"/>
+  <rect x="168" y="276" width="56" height="26" rx="13" fill="#2C9E6E"/>
+  <rect x="232" y="276" width="56" height="26" rx="13" fill="#E9D8B8"/>
+  <rect x="296" y="276" width="56" height="26" rx="13" fill="#3A3A3A"/>
+  <text x="40" y="326" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">‧ 材質、彈性、黏性相同——顏色沒有療效差異</text>
+  <text x="40" y="348" font-family="Microsoft JhengHei" font-size="12.5" fill="#12343B">‧ 依喜好/膚色挑即可；深色較耐髒、淺色在深膚上較明顯</text>
+
+    <text x="220" y="382" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">格數＝長度單位；顏色＝外觀選擇，功能相同</text>
+  </svg></div></div>
+        <div class="split-body"><p class="lead"><b>格：</b>背紙印的方格，1 格 = 5 公分，貼布寬也是 5 公分。照格數剪最快，每式都標好所需格數(多為 3–6 格)。</p><p class="lead"><b>顏色：</b>材質、彈性、黏性完全相同——<b style="color:#E8552D">沒有療效差異</b>，純外觀選擇。深色耐髒、淺色在深膚色上明顯。</p></div>
+      </div></div></section>
+<section class="slide" data-idx="8" data-type="diagram"><div class="pad"><div class="eyebrow accent-orange-txt">工具 ②</div><h2 class="h2">怎麼剪？五種形狀</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <rect x="50" y="48" width="216" height="26" rx="13" fill="#E8552D" opacity="0.9"/>
+  <line x1="104" y1="51" x2="104" y2="71" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.85"/><line x1="158" y1="51" x2="158" y2="71" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.85"/><line x1="212" y1="51" x2="212" y2="71" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.85"/>
+  <text x="288" y="58" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B">I 形</text>
+   <text x="288" y="76" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E">原條使用‧最常用（4 格示意）</text>
+  <rect x="50" y="112" width="62" height="26" rx="13" fill="#E8552D" opacity="0.9"/>
+  <path d="M110 125 C150 118 210 104 262 96" stroke="#E8552D" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M110 125 C150 132 210 146 262 154" stroke="#E8552D" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <line x1="112" y1="115" x2="112" y2="135" stroke="#fff" stroke-width="1.5" stroke-dasharray="3 4"/>
+  <text x="288" y="120" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B">Y 形</text>
+   <text x="288" y="138" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E">從尾端中剪一刀‧錨點留 1 格</text>
+  <path d="M50 178 C76 172 98 168 118 172" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M50 210 C76 216 98 220 118 216" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <rect x="116" y="181" width="56" height="26" rx="6" fill="#E8552D" opacity="0.95"/>
+  <path d="M170 172 C196 168 226 168 252 174" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M170 216 C196 220 226 220 252 214" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <text x="288" y="186" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B">X 形</text>
+   <text x="288" y="204" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E">兩端各剪一刀‧中段留 1–2 格</text>
+  <rect x="50" y="252" width="52" height="26" rx="13" fill="#E8552D" opacity="0.9"/>
+  <path d="M100 265 C150 252 210 244 262 240" stroke="#F4A93C" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M100 265 C150 260 210 256 262 256" stroke="#F4A93C" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M100 265 C150 270 210 274 262 274" stroke="#F4A93C" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M100 265 C150 278 210 286 262 290" stroke="#F4A93C" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <text x="288" y="256" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B">爪形（扇形）</text>
+   <text x="288" y="274" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E">剪 4 條‧錨點留 1–2 格</text>
+  <rect x="50" y="320" width="44" height="22" rx="11" fill="#E8552D" opacity="0.9"/>
+  <path d="M92 331 C144 320 210 314 262 312" stroke="#F4A93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M92 331 C144 325 210 322 262 321" stroke="#F4A93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M92 331 C144 330 210 330 262 330" stroke="#F4A93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M92 331 C144 336 210 339 262 340" stroke="#F4A93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M92 331 C144 341 210 347 262 350" stroke="#F4A93C" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <text x="288" y="324" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#12343B">細爪形</text>
+   <text x="288" y="342" font-family="Microsoft JhengHei" font-size="11" fill="#5A6A6E">剪 5–6 細條‧臉部專用</text>
+
+    <text x="220" y="382" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">白色虛線＝背紙格線（1 格 = 5 公分）‧ 所有形狀四角先修圓</text>
+  </svg></div></div>
+        <div class="split-body"><ol class="steps"><li>依「用量」格數剪下長度(1 格 = 5 公分)</li><li>所有形狀四角先修圓——直角最易勾衣翹起</li><li>Y/X/爪形：從尾端沿長軸剪開，錨點留 1–2 格不剪</li><li>細爪形：剪成 4–6 條等寬細條，臉部用</li><li>剪好先別撕背紙，要貼時再從錨點端撕</li></ol><div class="keybar light">形狀選擇：順一條肌肉→I｜包覆繞關節→Y｜定點痛→X｜消腫→爪｜臉→細爪</div></div>
+      </div></div></section>
+<section class="slide" data-idx="9" data-type="tension"><div class="pad"><div class="eyebrow accent-orange-txt">工具 ③</div><h2 class="h2">怎麼拉？張力等級(拉動滑桿)</h2>
+      <div class="tension-wrap">
+        <div class="tension-left">
+          <div class="t-readout">
+            <div class="t-pct" id="tPct">25<span>%</span></div>
+            <div class="t-name" id="tName">輕張力</div>
+          </div>
+          <input type="range" min="0" max="100" value="25" id="tSlider" class="t-slider">
+          <div class="t-scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+          <div class="t-bar"><div class="t-fill" id="tFill"></div></div>
+        </div>
+        <div class="tension-right">
+          <div class="t-card" id="tCard">
+            <div class="t-use" id="tUse">放鬆緊繃肌肉</div>
+            <div class="t-how" id="tHow">撕開背紙、幾乎不拉（背紙撕開本身已有些微延展）</div>
+            <div class="t-eg" id="tEg">例：頸肩、媽媽手、跑後小腿</div>
+          </div>
+          <div class="t-note">「施加張力」＝只拉貼布<b>中段</b>；兩端錨點永遠 <b>0%</b> 輕放。<br>口訣：中＝拉到底回放一半｜高＝拉到底回放 1/4。</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="10" data-type="decision"><div class="pad"><div class="eyebrow accent-orange-txt">工具 ④</div><h2 class="h2">怎麼貼？擺位·張力·方向決策</h2>
+      <div class="split">
+        <div class="split-img sm"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    <!-- 左：促進 -->
+    
+    <path d="M94 70 C90 130 90 200 98 250 L142 250 C150 200 150 130 146 70 Q120 60 94 70 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+    <text x="120" y="64" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="middle">起點(近端)</text>
+    <text x="120" y="272" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="middle">終點(遠端)</text>
+    <path d="M120 80 L120 240" stroke="#028090" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+    <line x1="120" y1="86" x2="120" y2="234" stroke="#fff" stroke-width="2.5" marker-end="url(#arrow)" opacity="0.95"/>
+    <circle cx="120" cy="80" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="106" y="85" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="end">起</text><text x="106" y="85" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="end">起</text>
+    <circle cx="120" cy="240" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="106" y="245" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="end">終</text><text x="106" y="245" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="end">終</text>
+    <text x="120" y="300" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#028090" text-anchor="middle">促進 (近→遠)</text>
+    <text x="120" y="320" font-family="Microsoft JhengHei" font-size="12" fill="#5A6A6E" text-anchor="middle">順肌肉方向‧喚醒無力肌</text>
+    <!-- 右：放鬆 -->
+    
+    <path d="M294 70 C290 130 290 200 298 250 L342 250 C350 200 350 130 346 70 Q320 60 294 70 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+    <text x="320" y="64" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="middle">起點(近端)</text>
+    <text x="320" y="272" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="middle">終點(遠端)</text>
+    <path d="M320 80 L320 240" stroke="#F4A93C" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+    <line x1="320" y1="234" x2="320" y2="86" stroke="#fff" stroke-width="2.5" marker-end="url(#arrow)" opacity="0.95"/>
+    <circle cx="320" cy="240" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="334" y="245" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">起</text><text x="334" y="245" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="start">起</text>
+    <circle cx="320" cy="80" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="334" y="85" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">終</text><text x="334" y="85" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="start">終</text>
+    <text x="320" y="300" font-family="Microsoft JhengHei" font-size="15" font-weight="bold" fill="#F4A93C" text-anchor="middle">放鬆 (遠→近)</text>
+    <text x="320" y="320" font-family="Microsoft JhengHei" font-size="12" fill="#5A6A6E" text-anchor="middle">逆肌肉方向‧踩煞車</text>
+    <!-- 中間分隔 -->
+    <line x1="220" y1="80" x2="220" y2="320" stroke="#C9D9D9" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="220" y="358" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">同一條肌肉‧只差「貼的方向」‧目的完全相反</text>
+  </svg></div></div>
+        <div class="split-body">
+          <table class="dtable"><thead><tr><th>目的</th><th>擺位</th><th>張力</th><th>方向</th></tr></thead>
+          <tbody><tr>
+      <td class="d-aim" style="border-left:4px solid #028090">放鬆 緊繃肌</td>
+      <td>肌肉拉長</td><td>輕 15–25%</td><td class="d-dir">終→起(逆肌肉煞車)</td></tr><tr>
+      <td class="d-aim" style="border-left:4px solid #2C9E6E">促進 無力肌</td>
+      <td>肌肉拉長</td><td>輕中 25–35%</td><td class="d-dir">起→終(順肌肉喚醒)</td></tr><tr>
+      <td class="d-aim" style="border-left:4px solid #F4A93C">支撐 穩關節</td>
+      <td>關節中位</td><td>中高 50–75%</td><td class="d-dir">環繞/橫跨關節</td></tr><tr>
+      <td class="d-aim" style="border-left:4px solid #E8552D">痛點 定點痛</td>
+      <td>局部伸展</td><td>高 50–75%</td><td class="d-dir">中心對痛點、四端輕放</td></tr><tr>
+      <td class="d-aim" style="border-left:4px solid #5A9AAB">消腫 引流</td>
+      <td>微伸展</td><td>極低 0–25%</td><td class="d-dir">錨近端淋巴結、尾鋪遠端</td></tr></tbody></table>
+          <div class="keybar">先把肌肉「拉長」再貼，回正後皮膚推擠成皺褶才有效。同部位因目的不同，擺位/張力/方向三者全跟著換。</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="11" data-type="content"><div class="pad"><div class="eyebrow accent-orange-txt">貼前準備</div><h2 class="h2">動手前：清潔測試 · 禁忌把關</h2>
+      <div class="two-col"><div class="col col-teal">
+      <div class="col-h">清潔與皮膚測試</div>
+      <ul><li>清水/生理食鹽水洗淨擦乾、去油去汗</li><li>務必去除乳液、凡士林、爽身粉</li><li>毛髮濃密處順毛流剃短</li><li>勿用酒精大面積擦(長者皮膚易乾裂)</li><li>首次使用先貼小片測試 24 小時</li></ul></div><div class="col col-orange">
+      <div class="col-h">禁忌：這些不要貼</div>
+      <ul><li>開放性傷口、皮膚潰瘍、感染</li><li>深層靜脈血栓、惡性腫瘤局部</li><li>高齡、糖尿病、抗凝血者更謹慎</li><li>出現紅疹立即移除、勿搔抓</li><li>夜間痛醒/麻木無力 → 先轉介</li></ul></div></div>
+      </div></section>
+<section class="slide" data-idx="12" data-type="section"><div class="section-slide accent-orange">
+      <div class="section-label">四大部位</div>
+      <h2 class="section-title">四大部位貼法</h2>
+      <p class="section-sub">頸肩 · 下背 · 膝蓋 · 腳踝 · 足底　｜　圖解＋影片</p>
+    </div></section>
+<section class="slide" data-idx="13" data-type="tape"><div class="pad">
+      <div class="eyebrow accent-teal-txt">NECK & SHOULDER</div>
+      <h2 class="h2">頸肩酸痛貼法</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <!-- 頭 -->
+  <circle cx="220" cy="66" r="33" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 頸 -->
+  <path d="M204 96 L204 118 L236 118 L236 96 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 肩背（T恤形）-->
+  <path d="M204 116 C160 118 120 132 100 158 L106 200 L140 192 L138 300 Q220 318 302 300 L300 192 L334 200 L340 158 C320 132 280 118 236 116 Z"
+        fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 右側淡色對稱貼布（示意雙側）-->
+  <path d="M292 160 C272 138 252 116 236 100" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.35"/>
+  <!-- 主貼布：肩峰→髮際 -->
+  <path d="M148 160 C168 138 188 116 204 100" stroke="#E8552D" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="148" cy="160" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="148" y="184" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="middle">起 肩峰</text><text x="148" y="184" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="middle">起 肩峰</text>
+  <circle cx="176" cy="130" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="204" cy="100" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="218" y="105" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">終 髮際</text><text x="218" y="105" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="start">終 髮際</text>
+  <line x1="154" y1="153" x2="199" y2="106" stroke="#12343B" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+
+    <text x="220" y="354" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">頸肩背面 ‧ 上斜方肌（雙側可對稱貼）</text>
+    
+    <g font-family="Microsoft JhengHei, sans-serif" font-size="13">
+      <circle cx="22" cy="374" r="6" fill="#2C9E6E"/><text x="34" y="379" fill="#12343B">起點 (錨點)</text>
+      <circle cx="152" cy="374" r="6" fill="#F4A93C"/><text x="164" y="379" fill="#12343B">中間 (施加張力)</text>
+      <circle cx="302" cy="374" r="6" fill="#12343B"/><text x="314" y="379" fill="#12343B">終點 (錨點)</text>
+    </g>
+  </svg></div></div>
+        <div class="split-body">
+          <div class="infocard dark tight">
+            <div class="ic-row"><span>目標</span><b>上斜方肌(低頭、久坐肩頸僵緊)</b></div>
+            <div class="ic-row"><span>形狀/張力</span><b>Y 形 × 1 · 輕張力 15–25%(放鬆)</b></div>
+            <div class="ic-row"><span>長度</span><b>4 格(尾端剪開、錨點留 1 格)</b></div>
+            <div class="ic-row"><span>擺位</span><b>頭轉對側並微低頭(拉長斜方肌)</b></div>
+            <div class="ic-row hi"><span>方向</span><b>終(頸/髮際) → 起(肩峰)，逆肌肉放鬆</b></div>
+          </div>
+          <div class="sub-h">貼紮步驟（起點 → 中間 → 終點）</div>
+          <ol class="steps"><li>錨點固定在肩峰(肩外側)，不加張力</li><li>頭轉對側、微低頭拉開頸肩</li><li>Y 形兩條沿斜方肌外緣貼向頸部</li><li>尾端近髮際線，頭回正後摩擦活化</li></ol>
+          <div class="tipbar"><b>提醒：</b>適合低頭族、久坐長者</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="14" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 頸肩</div><h2 class="h2">跟著影片學：頸肩痠痛貼法</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/8YyVOX4Ls6Q?rel=0" title="跟著影片學：頸肩痠痛貼法" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=8YyVOX4Ls6Q" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>低頭、頭轉向對側，把斜方肌拉長再貼</li><li>沿斜方肌外緣，從肩膀貼向頸部（輕張力）</li><li>兩端錨點不拉，頭回正後摩擦活化</li><li>適合久坐打電腦、低頭族的肩頸緊繃</li></ul></div><div class="vnote"><b>適用：</b>久坐、低頭族肩頸僵硬痠脹　<br><b>提醒：</b>落枕劇痛、手會麻無力，請先就醫</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=8YyVOX4Ls6Q" target="_blank" rel="noopener">Acti-Tape（YouTube） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="15" data-type="tape"><div class="pad">
+      <div class="eyebrow accent-teal-txt">LOWER BACK</div>
+      <h2 class="h2">下背腰部酸痛貼法</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <!-- 軀幹：肩寬→腰收→臀寬 -->
+  <path d="M140 46 L300 46 C302 100 296 140 306 200 C312 240 308 280 296 308 Q220 326 144 308 C132 280 128 240 134 200 C144 140 138 100 140 46 Z"
+        fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 脊椎 -->
+  <line x1="220" y1="52" x2="220" y2="312" stroke="#9DBABA" stroke-width="3" stroke-dasharray="6 6"/>
+  <!-- 腰線提示 -->
+  <text x="318" y="205" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5">腰</text>
+  <!-- 兩條 I 形 -->
+  <rect x="189" y="100" width="13" height="180" rx="6.5" fill="#E8552D" opacity="0.9"/>
+  <rect x="238" y="100" width="13" height="180" rx="6.5" fill="#E8552D" opacity="0.9"/>
+  <circle cx="195" cy="280" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="181" y="285" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="end">起 薦椎</text><text x="181" y="285" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="end">起 薦椎</text>
+  <circle cx="195" cy="190" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="195" cy="100" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="181" y="105" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="end">終 胸椎</text><text x="181" y="105" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="end">終 胸椎</text>
+  <circle cx="245" cy="280" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="245" cy="100" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/>
+  <line x1="195" y1="270" x2="195" y2="112" stroke="#12343B" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.6"/>
+
+    <text x="220" y="354" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">下背背面 ‧ 豎脊肌（避開脊椎正上方）</text>
+    
+    <g font-family="Microsoft JhengHei, sans-serif" font-size="13">
+      <circle cx="22" cy="374" r="6" fill="#2C9E6E"/><text x="34" y="379" fill="#12343B">起點 (錨點)</text>
+      <circle cx="152" cy="374" r="6" fill="#F4A93C"/><text x="164" y="379" fill="#12343B">中間 (施加張力)</text>
+      <circle cx="302" cy="374" r="6" fill="#12343B"/><text x="314" y="379" fill="#12343B">終點 (錨點)</text>
+    </g>
+  </svg></div></div>
+        <div class="split-body">
+          <div class="infocard dark tight">
+            <div class="ic-row"><span>目標</span><b>豎脊肌(搬重物、久站久坐下背痛)</b></div>
+            <div class="ic-row"><span>形狀/張力</span><b>I 形 × 2 · 輕中張力 15–35%</b></div>
+            <div class="ic-row"><span>長度</span><b>I 形 × 2，各 4–5 格</b></div>
+            <div class="ic-row"><span>擺位</span><b>身體微前彎(拉長下背肌肉)</b></div>
+            <div class="ic-row hi"><span>方向</span><b>起(薦椎) → 終(胸椎)，由下往上</b></div>
+          </div>
+          <div class="sub-h">貼紮步驟（起點 → 中間 → 終點）</div>
+          <ol class="steps"><li>身體微前彎，拉開下背</li><li>兩條 I 形平行脊椎兩側，避開脊椎正上方</li><li>由下(薦椎)往上貼向胸椎，輕中張力</li><li>兩端錨點不拉，回正後摩擦活化</li></ol>
+          <div class="tipbar"><b>提醒：</b>急性劇痛或腳麻無力應先就醫</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="16" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 下背腰部</div><h2 class="h2">跟著影片學：下背腰部貼法</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/PPPkJB6_EHQ?rel=0" title="跟著影片學：下背腰部貼法" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=PPPkJB6_EHQ" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>身體微微前彎，把下背肌肉拉長</li><li>兩條 I 形平行貼在脊椎兩側，避開脊椎正上方</li><li>由下（薦椎）往上貼向胸椎，輕中張力</li><li>兩端錨點不拉，站直後摩擦活化</li></ul></div><div class="vnote"><b>適用：</b>久站久坐、搬重物後的下背痠痛　<br><b>提醒：</b>腳麻、無力或劇痛，請先就醫</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=PPPkJB6_EHQ" target="_blank" rel="noopener">Balance Health（YouTube） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="17" data-type="tape"><div class="pad">
+      <div class="eyebrow accent-teal-txt">KNEE</div>
+      <h2 class="h2">膝關節酸痛貼法</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <!-- 大腿 -->
+  <path d="M184 36 C182 90 186 130 192 160 L250 160 C256 130 260 90 258 36 Q221 28 184 36 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 膝關節 -->
+  <path d="M190 160 C182 178 182 212 192 232 L250 232 C260 212 260 178 252 160 Z" fill="#E9F1F1" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="221" cy="196" r="24" fill="#fff" stroke="#9DBABA" stroke-width="2"/>
+  <text x="221" y="201" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="middle">髕骨</text>
+  <!-- 小腿 -->
+  <path d="M192 232 C186 270 190 300 196 324 L246 324 C252 300 256 270 250 232 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- Y 形繞髕骨 -->
+  <path d="M214 70 C204 120 192 165 196 224" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M228 70 C238 120 250 165 246 224" stroke="#E8552D" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <!-- I 形橫貼髕骨下 -->
+  <rect x="178" y="228" width="86" height="13" rx="6.5" fill="#F4A93C" opacity="0.95"/>
+  <circle cx="221" cy="68" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="235" y="73" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">起 大腿前</text><text x="235" y="73" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="start">起 大腿前</text>
+  <circle cx="195" cy="165" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="196" cy="224" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="246" cy="224" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="260" y="229" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">終</text><text x="260" y="229" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="start">終</text>
+  <circle cx="221" cy="234" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/><text x="221" y="258" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="middle">I形支撐</text><text x="221" y="258" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#F4A93C" text-anchor="middle">I形支撐</text>
+
+    <text x="220" y="354" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">膝正面 ‧ Y 形繞髕骨 + I 形橫向支撐</text>
+    
+    <g font-family="Microsoft JhengHei, sans-serif" font-size="13">
+      <circle cx="22" cy="374" r="6" fill="#2C9E6E"/><text x="34" y="379" fill="#12343B">起點 (錨點)</text>
+      <circle cx="152" cy="374" r="6" fill="#F4A93C"/><text x="164" y="379" fill="#12343B">中間 (施加張力)</text>
+      <circle cx="302" cy="374" r="6" fill="#12343B"/><text x="314" y="379" fill="#12343B">終點 (錨點)</text>
+    </g>
+  </svg></div></div>
+        <div class="split-body">
+          <div class="infocard dark tight">
+            <div class="ic-row"><span>目標</span><b>髕骨周圍(退化性關節炎、上下樓痛)</b></div>
+            <div class="ic-row"><span>形狀/張力</span><b>Y 形(輕)+ 髕骨下 I 形(中約40%)</b></div>
+            <div class="ic-row"><span>長度</span><b>Y 形 4–5 格 ＋ I 形 2–3 格</b></div>
+            <div class="ic-row"><span>擺位</span><b>膝彎約 90 度(拉開膝前皮膚)</b></div>
+            <div class="ic-row hi"><span>方向</span><b>Y 起(大腿前)繞髕骨→終(膝下)；I 橫貼</b></div>
+          </div>
+          <div class="sub-h">貼紮步驟（起點 → 中間 → 終點）</div>
+          <ol class="steps"><li>膝蓋彎曲約 90 度，拉開膝前皮膚</li><li>Y 形錨點貼大腿前側，兩條繞髕骨兩側</li><li>I 形橫貼髕骨下方提供支撐(中張力)</li><li>伸直膝蓋後摩擦活化全部貼布</li></ol>
+          <div class="tipbar"><b>提醒：</b>退化性膝關節炎搭配股四頭肌訓練更好</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="18" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 膝關節</div><h2 class="h2">跟著影片學：膝關節貼法</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/vosedeF58mw?rel=0" title="跟著影片學：膝關節貼法" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=vosedeF58mw" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>膝蓋彎約 90 度，拉開膝前皮膚再貼</li><li>貼布繞過髕骨兩側，給膝蓋穩定感</li><li>髕骨下方再橫貼一條支撐</li><li>伸直膝蓋後，整條摩擦活化</li></ul></div><div class="vnote"><b>適用：</b>上下樓梯痛、退化性膝關節、運動防護　<br><b>提醒：</b>搭配股四頭肌（大腿前側）訓練效果更好</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=vosedeF58mw" target="_blank" rel="noopener">SHAPER MAN（YouTube，含中文字幕） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="19" data-type="tape"><div class="pad">
+      <div class="eyebrow accent-teal-txt">ANKLE</div>
+      <h2 class="h2">踝關節酸痛/不穩貼法</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <!-- 小腿正面 -->
+  <path d="M192 40 C188 110 190 170 198 228 L244 228 C252 170 254 110 250 40 Q221 32 192 40 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 內外踝 -->
+  <circle cx="193" cy="238" r="11" fill="#E9F1F1" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="249" cy="238" r="11" fill="#E9F1F1" stroke="#9DBABA" stroke-width="2"/>
+  <text x="168" y="242" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="end">內踝</text>
+  <text x="274" y="242" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5">外踝</text>
+  <!-- 足部（正面看：腳背向前縮短）-->
+  <path d="M186 248 C176 268 176 286 190 296 L252 296 C266 286 266 268 256 248 Z" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- U 形貼布：內踝上→足底→外踝上 -->
+  <path d="M186 150 C176 200 176 250 190 286 C210 304 232 304 252 286 C266 250 266 200 256 150" stroke="#E8552D" stroke-width="13" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="186" cy="150" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="172" y="155" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="end">起 內踝上</text><text x="172" y="155" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="end">起 內踝上</text>
+  <circle cx="221" cy="297" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/><text x="221" y="321" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="middle">繞足底</text><text x="221" y="321" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#F4A93C" text-anchor="middle">繞足底</text>
+  <circle cx="256" cy="150" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="270" y="155" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="start">終 外踝上</text><text x="270" y="155" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="start">終 外踝上</text>
+  <line x1="221" y1="288" x2="252" y2="162" stroke="#12343B" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.55"/>
+
+    <text x="220" y="354" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">踝正面 ‧ I 形 U 形包覆（內踝→足底→外踝）</text>
+    
+    <g font-family="Microsoft JhengHei, sans-serif" font-size="13">
+      <circle cx="22" cy="374" r="6" fill="#2C9E6E"/><text x="34" y="379" fill="#12343B">起點 (錨點)</text>
+      <circle cx="152" cy="374" r="6" fill="#F4A93C"/><text x="164" y="379" fill="#12343B">中間 (施加張力)</text>
+      <circle cx="302" cy="374" r="6" fill="#12343B"/><text x="314" y="379" fill="#12343B">終點 (錨點)</text>
+    </g>
+  </svg></div></div>
+        <div class="split-body">
+          <div class="infocard dark tight">
+            <div class="ic-row"><span>目標</span><b>外踝(扭傷後期、走路不穩)</b></div>
+            <div class="ic-row"><span>形狀/張力</span><b>I 形 U 形包覆 · 中高張力 50%</b></div>
+            <div class="ic-row"><span>長度</span><b>I 形 5–6 格(依腳型調整)</b></div>
+            <div class="ic-row"><span>擺位</span><b>腳踝背屈 90 度中位</b></div>
+            <div class="ic-row hi"><span>方向</span><b>起(內踝上) → 繞足底 → 終(外踝上)</b></div>
+          </div>
+          <div class="sub-h">貼紮步驟（起點 → 中間 → 終點）</div>
+          <ol class="steps"><li>腳踝擺正中位(背屈 90 度)</li><li>I 形由內踝下繞過足底貼向外踝，支撐</li><li>如有腫脹另加爪形低張力向上引流</li><li>錨點不拉、摩擦活化，確認可正常行走</li></ol>
+          <div class="tipbar"><b>提醒：</b>急性扭傷 48 小時內以冰敷、抬高為主</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="20" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 腳踝</div><h2 class="h2">跟著影片學：腳踝貼法</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/aRKQSZYGRE0?rel=0" title="跟著影片學：腳踝貼法" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=aRKQSZYGRE0" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>腳踝擺在正中位（腳背與小腿約 90 度）</li><li>貼布由內踝上方繞過足底，貼向外踝（U 形包覆）</li><li>中高張力提供支撐，錨點不拉</li><li>貼好確認能正常走路、不卡卡</li></ul></div><div class="vnote"><b>適用：</b>翻腳刀後期、走路怕扭、運動防護　<br><b>提醒：</b>急性扭傷 48 小時內，先以冰敷、抬高為主</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=aRKQSZYGRE0" target="_blank" rel="noopener">SHAPER MAN（YouTube，含中文字幕） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="21" data-type="tape"><div class="pad">
+      <div class="eyebrow accent-teal-txt">PLANTAR FASCIA</div>
+      <h2 class="h2">足底筋膜酸痛貼法</h2>
+      <div class="split">
+        <div class="split-img"><div class="diagram"><svg viewBox="0 0 440 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L6,3 L0,6 Z" fill="#12343B"/>
+  </marker>
+</defs>
+    <rect x="0" y="0" width="440" height="400" rx="14" fill="#F4F8F8"/>
+    
+  <!-- 腳印輪廓 -->
+  <path d="M182 318 C160 300 162 268 172 240 C180 214 178 188 172 160 C166 124 176 92 206 80 C238 68 272 84 280 116 C286 142 282 170 270 196 C262 222 266 252 270 278 C274 306 252 326 224 326 C206 326 192 324 182 318 Z"
+        fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <!-- 五趾 -->
+  <circle cx="188" cy="66" r="13" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="214" cy="54" r="12" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="240" cy="52" r="11" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="263" cy="58" r="10" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <circle cx="282" cy="70" r="9" fill="#DCE8E8" stroke="#9DBABA" stroke-width="2"/>
+  <text x="150" y="300" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="end">腳跟</text>
+  <text x="150" y="180" font-family="Microsoft JhengHei" font-size="12" fill="#8AA5A5" text-anchor="end">足弓</text>
+  <!-- 主 I 形：腳跟→趾根 -->
+  <path d="M222 300 C212 250 208 180 224 104" stroke="#E8552D" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <!-- 橫向短 I 形：腳跟支撐 -->
+  <rect x="184" y="272" width="80" height="12" rx="6" fill="#F4A93C" opacity="0.95"/>
+  <circle cx="222" cy="300" r="9" fill="#2C9E6E" stroke="#fff" stroke-width="2.5"/><text x="222" y="324" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="middle">起 腳跟</text><text x="222" y="324" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#2C9E6E" text-anchor="middle">起 腳跟</text>
+  <circle cx="212" cy="200" r="9" fill="#F4A93C" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="224" cy="104" r="9" fill="#12343B" stroke="#fff" stroke-width="2.5"/><text x="224" y="89" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="none" stroke="#F4F8F8" stroke-width="5" stroke-linejoin="round" text-anchor="middle">終 趾根</text><text x="224" y="89" font-family="Microsoft JhengHei" font-size="13" font-weight="bold" fill="#12343B" text-anchor="middle">終 趾根</text>
+  <line x1="220" y1="290" x2="223" y2="116" stroke="#12343B" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.55"/>
+
+    <text x="220" y="354" font-family="Microsoft JhengHei" font-size="13" fill="#5A6A6E" text-anchor="middle">足底（腳印視角）‧ I 形沿筋膜 + 橫貼腳跟</text>
+    
+    <g font-family="Microsoft JhengHei, sans-serif" font-size="13">
+      <circle cx="22" cy="374" r="6" fill="#2C9E6E"/><text x="34" y="379" fill="#12343B">起點 (錨點)</text>
+      <circle cx="152" cy="374" r="6" fill="#F4A93C"/><text x="164" y="379" fill="#12343B">中間 (施加張力)</text>
+      <circle cx="302" cy="374" r="6" fill="#12343B"/><text x="314" y="379" fill="#12343B">終點 (錨點)</text>
+    </g>
+  </svg></div></div>
+        <div class="split-body">
+          <div class="infocard dark tight">
+            <div class="ic-row"><span>目標</span><b>足底筋膜(晨起第一步腳跟痛)</b></div>
+            <div class="ic-row"><span>形狀/張力</span><b>I 形 + 橫貼腳跟 · 中張力</b></div>
+            <div class="ic-row"><span>長度</span><b>I 形 3–4 格 ＋ 橫貼 2 格</b></div>
+            <div class="ic-row"><span>擺位</span><b>腳踝背屈、腳趾向上扳(拉長筋膜)</b></div>
+            <div class="ic-row hi"><span>方向</span><b>起(腳跟) → 終(趾根)；另橫貼腳跟</b></div>
+          </div>
+          <div class="sub-h">貼紮步驟（起點 → 中間 → 終點）</div>
+          <ol class="steps"><li>腳趾向上扳、腳踝背屈拉長足底筋膜</li><li>I 形錨點貼腳跟，沿足底貼向趾根</li><li>另一短 I 形橫貼腳跟加強支撐</li><li>摩擦活化，站立確認不滑動</li></ol>
+          <div class="tipbar"><b>提醒：</b>搭配小腿伸展與足底滾球更好</div>
+        </div>
+      </div></div></section>
+<section class="slide" data-idx="22" data-type="video"><div class="pad"><div class="eyebrow accent-orange-txt">影片教學 · 足底筋膜</div><h2 class="h2">跟著影片學：足底筋膜貼法</h2><div class="vsplit"><div class="vid-wrap"><div class="vid-frame"><iframe src="https://www.youtube-nocookie.com/embed/0pIvjR2d7g4?rel=0" title="跟著影片學：足底筋膜貼法" loading="lazy" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><a class="vid-link" href="https://www.youtube.com/watch?v=0pIvjR2d7g4" target="_blank" rel="noopener">▶ 在 YouTube 開啟（若上方無法播放）</a></div><div class="vbody"><div class="vcard"><div class="vcard-h">影片重點</div><ul class="vlist"><li>腳趾向上翹，把足底筋膜拉長再貼</li><li>從腳跟貼向腳趾根部（爪形或 I 形）</li><li>可再橫貼一條撐住足弓</li><li>輕中張力，貼後摩擦活化</li></ul></div><div class="vnote"><b>適用：</b>早晨下床腳跟刺痛、久站足底痠痛　<br><b>提醒：</b>持續疼痛建議就醫評估足底筋膜炎</div><div class="vsrc">影片來源：<a href="https://www.youtube.com/watch?v=0pIvjR2d7g4" target="_blank" rel="noopener">熱血猴子（YouTube） ↗</a></div></div></div></div></section>
+<section class="slide" data-idx="23" data-type="section"><div class="section-slide accent-teal"><div class="section-label">SAFETY &amp; CARE</div><h2 class="section-title">貼後照護與提醒</h2><p class="section-sub">怎麼照顧 · 安全須知</p></div></section>
+<section class="slide" data-idx="24" data-type="qa"><div class="pad"><div class="eyebrow accent-teal-txt">貼後照護</div><h2 class="h2">貼後照護：重貼 · 固定 · 碰水 · 吹風</h2><div class="qa-list"><div class="qa-row" style="border-left-color:#E8552D">
+      <div class="qa-q"><span style="color:#E8552D">Q</span> 貼錯撕起來能重複貼嗎？</div>
+      <div class="qa-a">不建議。熱感壓克力膠是一次性，撕下黏性大減、易翹，重撕也傷皮膚。貼錯就換新的。</div></div><div class="qa-row" style="border-left-color:#028090">
+      <div class="qa-q"><span style="color:#028090">Q</span> 怎麼固定、避免掉、更耐用？</div>
+      <div class="qa-a">①錨點兩端不拉(翹邊主因) ②四角修圓 ③貼前去油去汗去毛 ④貼後摩擦生熱10–20下 ⑤30–60分內別碰水流汗 ⑥易磨邊緣壓段收尾</div></div><div class="qa-row" style="border-left-color:#028090">
+      <div class="qa-q"><span style="color:#028090">Q</span> 洗澡碰水會有問題嗎？</div>
+      <div class="qa-a">不會，防水可正常洗澡。但勿熱水久沖、勿搓揉；洗完輕拍乾或冷風吹乾；泡澡、游泳長泡會加速翹邊。</div></div><div class="qa-row" style="border-left-color:#D9942B">
+      <div class="qa-q"><span style="color:#D9942B">Q</span> 吹風機能幫助更服貼嗎？</div>
+      <div class="qa-a">可以但用「溫風」拉開距離快速吹幾秒活化黏膠。切勿高溫近距離直吹(會燙傷，長者更危險)。最安全：用手掌按壓生熱。</div></div></div></div></section>
+<section class="slide" data-idx="25" data-type="remember"><div class="remember-slide"><div class="eyebrow light">REMEMBER</div><h2 class="rm-title">使用所有貼法前，請記得</h2><div class="rm-row"><div class="rm-n">1</div><div>先排除禁忌：開放傷口、感染、血栓、惡性腫瘤局部一律不貼</div></div><div class="rm-row"><div class="rm-n">2</div><div>首次使用必做皮膚測試；高齡、糖尿病、抗凝血者更謹慎</div></div><div class="rm-row"><div class="rm-n">3</div><div>錨點不拉、依目的調整張力、貼後務必摩擦活化</div></div><div class="rm-row"><div class="rm-n">4</div><div>紅、癢、刺、麻立即移除，不要忍耐</div></div><div class="rm-row"><div class="rm-n">5</div><div>貼布是短期輔助，運動與正確生活習慣才是根本</div></div></div></section>
+<section class="slide" data-idx="26" data-type="sources"><div class="pad"><div class="eyebrow accent-teal-txt">REFERENCES</div><h2 class="h2">影片出處總整理</h2><div class="srclist"><div class="src-row"><span class="src-part">入門 DIY</span><div class="src-main"><a href="https://www.youtube.com/watch?v=mGm1j4D61O8" target="_blank" rel="noopener">先看一段：肌內效怎麼貼？ ↗</a><span class="src-ch">詹珞瑤 物理治療師（YouTube）</span></div></div><div class="src-row"><span class="src-part">頸肩</span><div class="src-main"><a href="https://www.youtube.com/watch?v=8YyVOX4Ls6Q" target="_blank" rel="noopener">跟著影片學：頸肩痠痛貼法 ↗</a><span class="src-ch">Acti-Tape（YouTube）</span></div></div><div class="src-row"><span class="src-part">下背腰部</span><div class="src-main"><a href="https://www.youtube.com/watch?v=PPPkJB6_EHQ" target="_blank" rel="noopener">跟著影片學：下背腰部貼法 ↗</a><span class="src-ch">Balance Health（YouTube）</span></div></div><div class="src-row"><span class="src-part">膝關節</span><div class="src-main"><a href="https://www.youtube.com/watch?v=vosedeF58mw" target="_blank" rel="noopener">跟著影片學：膝關節貼法 ↗</a><span class="src-ch">SHAPER MAN（YouTube，含中文字幕）</span></div></div><div class="src-row"><span class="src-part">腳踝</span><div class="src-main"><a href="https://www.youtube.com/watch?v=aRKQSZYGRE0" target="_blank" rel="noopener">跟著影片學：腳踝貼法 ↗</a><span class="src-ch">SHAPER MAN（YouTube，含中文字幕）</span></div></div><div class="src-row"><span class="src-part">足底筋膜</span><div class="src-main"><a href="https://www.youtube.com/watch?v=0pIvjR2d7g4" target="_blank" rel="noopener">跟著影片學：足底筋膜貼法 ↗</a><span class="src-ch">熱血猴子（YouTube）</span></div></div></div><p class="tiny">所有影片版權皆屬原 YouTube 頻道創作者所有，本教材僅作教學引用；影片重點文字為依內容整理之摘要，實際操作請以影片示範與專業人員指導為準。</p></div></section>
+<section class="slide" data-idx="27" data-type="end"><div class="end-slide"><div class="end-mark">♡</div><h2 class="end-title">謝謝大家的參與</h2>
+      <p class="end-sub">對照示意圖逐式練習 · 有問題隨時提出</p><p class="end-who">愛迪樂健康促進團隊</p></div></section></div>
+</div>
+
+<!-- 控制列 -->
+<div id="topbar">
+  <div class="tb-title">肌內效貼布貼法圖解大全</div>
+  <div class="tb-prog"><span id="progNow">1</span> / 28</div>
+</div>
+
+<!-- 桌機翻頁箭頭 -->
+<button id="prevBtn" class="navbtn" aria-label="上一頁">‹</button>
+<button id="nextBtn" class="navbtn next" aria-label="下一頁">›</button>
+
+<!-- 進度條 -->
+<div id="progbar"><div id="progfill"></div></div>
+
+<!-- 目錄按鈕 -->
+<button id="menuBtn" aria-label="目錄">☰</button>
+
+<!-- 目錄面板 -->
+<div id="tocPanel">
+  <div class="toc-head"><span>目錄</span><button id="tocClose" aria-label="關閉">×</button></div>
+  <div id="tocList"></div>
+</div>
+<div id="tocOverlay"></div>
+
+<script>
+const TOC = [{"i": 0, "label": "肌內效貼布 貼法圖解大全", "type": "cover"}, {"i": 1, "label": "目錄總覽", "type": "toc"}, {"i": 2, "label": "認識肌內效", "type": "section"}, {"i": 3, "label": "白貼 vs 肌內效：怎麼選？", "type": "content"}, {"i": 4, "label": "為什麼能止痛、促進、放鬆？", "type": "diagram"}, {"i": 5, "label": "影片：肌內效怎麼貼？(入門)", "type": "video"}, {"i": 6, "label": "四大基本功", "type": "section"}, {"i": 7, "label": "認識材料：「格」與顏色", "type": "diagram"}, {"i": 8, "label": "怎麼剪？五種形狀", "type": "diagram"}, {"i": 9, "label": "怎麼拉？張力等級(拉動滑桿)", "type": "tension"}, {"i": 10, "label": "怎麼貼？擺位·張力·方向", "type": "decision"}, {"i": 11, "label": "動手前：清潔測試 · 禁忌把關", "type": "content"}, {"i": 12, "label": "四大部位貼法", "type": "section"}, {"i": 13, "label": "頸肩痠痛貼法", "type": "tape"}, {"i": 14, "label": "影片：頸肩痠痛貼法", "type": "video"}, {"i": 15, "label": "下背腰部痠痛貼法", "type": "tape"}, {"i": 16, "label": "影片：下背腰部貼法", "type": "video"}, {"i": 17, "label": "膝關節痠痛貼法", "type": "tape"}, {"i": 18, "label": "影片：膝關節貼法", "type": "video"}, {"i": 19, "label": "踝關節痠痛/不穩貼法", "type": "tape"}, {"i": 20, "label": "影片：踝關節貼法", "type": "video"}, {"i": 21, "label": "足底筋膜痠痛貼法", "type": "tape"}, {"i": 22, "label": "影片：足底筋膜貼法", "type": "video"}, {"i": 23, "label": "貼後照護與提醒", "type": "section"}, {"i": 24, "label": "貼後照護：重貼·固定·碰水·吹風", "type": "qa"}, {"i": 25, "label": "使用所有貼法前，請記得", "type": "remember"}, {"i": 26, "label": "影片出處總整理", "type": "sources"}, {"i": 27, "label": "謝謝大家的參與", "type": "end"}];
+const TOTAL = 28;
+// ===== 模式偵測：桌機翻頁 vs 手機滾動 =====
+function isMobile() {
+  return window.matchMedia('(max-aspect-ratio:13/10)').matches;
+}
+
+const slidesEl = Array.from(document.querySelectorAll('.slide'));
+let cur = 0;
+
+// ===== 桌機翻頁 =====
+function show(n) {
+  if (isMobile()) return;
+  n = Math.max(0, Math.min(TOTAL - 1, n));
+  slidesEl.forEach((s, i) => {
+    s.classList.remove('active', 'prev');
+    if (i === n) s.classList.add('active');
+    else if (i < n) s.classList.add('prev');
+  });
+  cur = n;
+  document.getElementById('progNow').textContent = n + 1;
+  document.getElementById('progfill').style.width = ((n + 1) / TOTAL * 100) + '%';
+  updateTocCurrent();
+}
+function next() { show(cur + 1); }
+function prev() { show(cur - 1); }
+
+document.getElementById('nextBtn').onclick = next;
+document.getElementById('prevBtn').onclick = prev;
+
+document.addEventListener('keydown', e => {
+  if (isMobile()) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(TOTAL - 1);
+});
+
+// 觸控滑動（桌機平板橫式）
+let tx = 0, ty = 0;
+document.getElementById('deck').addEventListener('touchstart', e => {
+  if (isMobile()) return;
+  tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+}, { passive: true });
+document.getElementById('deck').addEventListener('touchend', e => {
+  if (isMobile()) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  const dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+}, { passive: true });
+
+// ===== 手機滾動：用 IntersectionObserver 更新進度 =====
+let io;
+function setupMobileObserver() {
+  if (io) io.disconnect();
+  io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        const idx = +en.target.dataset.idx;
+        cur = idx;
+        document.getElementById('progNow').textContent = idx + 1;
+        updateTocCurrent();
+      }
+    });
+  }, { threshold: 0.5 });
+  slidesEl.forEach(s => io.observe(s));
+}
+
+// ===== 模式初始化 =====
+function applyMode() {
+  if (isMobile()) {
+    slidesEl.forEach(s => s.classList.remove('active', 'prev'));
+    setupMobileObserver();
+  } else {
+    if (io) io.disconnect();
+    show(cur);
+  }
+}
+window.addEventListener('resize', () => { applyMode(); });
+
+// ===== 目錄 =====
+const tocList = document.getElementById('tocList');
+const accentColors = ['#028090', '#E8552D', '#F4A93C', '#12343B'];
+TOC.forEach((it, k) => {
+  const d = document.createElement('div');
+  const isSec = it.type === 'section';
+  d.className = 'toc-item' + (isSec ? ' sec' : '');
+  d.dataset.idx = it.i;
+  d.innerHTML = (isSec ? '' : `<span class="ti-n">${it.i + 1}</span>`) + `<span>${it.label || '—'}</span>`;
+  d.onclick = () => { goto(it.i); closeToc(); };
+  tocList.appendChild(d);
+});
+
+function goto(n) {
+  if (isMobile()) {
+    slidesEl[n].scrollIntoView({ behavior: 'smooth' });
+  } else {
+    show(n);
+  }
+}
+function updateTocCurrent() {
+  document.querySelectorAll('.toc-item').forEach(el => {
+    el.classList.toggle('cur', +el.dataset.idx === cur);
+  });
+}
+
+const menuBtn = document.getElementById('menuBtn');
+const tocPanel = document.getElementById('tocPanel');
+const tocOverlay = document.getElementById('tocOverlay');
+function openToc() { tocPanel.classList.add('open'); tocOverlay.classList.add('open'); }
+function closeToc() { tocPanel.classList.remove('open'); tocOverlay.classList.remove('open'); }
+menuBtn.onclick = () => tocPanel.classList.contains('open') ? closeToc() : openToc();
+document.getElementById('tocClose').onclick = closeToc;
+tocOverlay.onclick = closeToc;
+
+// ===== TOC 內頁網格 =====
+const tocGrid = document.getElementById('tocGrid');
+if (tocGrid) {
+  const groups = [
+    ['認識肌內效', '它是什麼 · 怎麼選 · 為什麼有效', '#028090', 2],
+    ['四大基本功', '認識材料 → 怎麼剪 → 怎麼拉 → 怎麼貼', '#E8552D', 6],
+    ['四大部位貼法', '頸肩 · 下背 · 膝 · 踝 · 足底（含影片）', '#F4A93C', 12],
+    ['貼後照護與提醒', '照護方式 · 禁忌與安全須知', '#12343B', 23]
+  ];
+  // 找各 section 對應 idx
+  const secIdx = {};
+  TOC.forEach(it => { if (it.type === 'section' || it.type === 'toc') {} });
+  groups.forEach((g, k) => {
+    const c = document.createElement('div');
+    c.className = 'toc-card';
+    c.innerHTML = `<div class="tnum" style="background:${g[2]}">${k + 1}</div><div><b>${g[0]}</b><span>${g[1]}</span></div>`;
+    // 跳到對應 section（用標題比對）
+    c.onclick = () => { goto(g[3]); };
+    tocGrid.appendChild(c);
+  });
+}
+
+// ===== 張力滑桿互動 =====
+const tSlider = document.getElementById('tSlider');
+if (tSlider) {
+  const levels = [
+    { max: 14, name: '極輕張力', col: '#028090', use: '消腫引流 / 臉部', how: '幾乎不拉、只是輕輕「放」上去', eg: '例：腳水腫、臉水腫(爪形)' },
+    { max: 25, name: '輕張力', col: '#028090', use: '放鬆緊繃肌肉', how: '撕開背紙、幾乎不拉(背紙撕開本身已有些微延展)', eg: '例：頸肩、媽媽手、跑後小腿' },
+    { max: 35, name: '輕中張力', col: '#F4A93C', use: '促進無力肌肉', how: '拉到感覺些微阻力即可，布面外觀不變', eg: '例：股四頭肌、臀肌喚醒' },
+    { max: 50, name: '中張力', col: '#F4A93C', use: '一般支撐', how: '先「拉到底」再回放一半', eg: '例：髕骨下橫貼、足弓支撐' },
+    { max: 75, name: '中高～高張力', col: '#E8552D', use: '關節支撐 / 痛點', how: '拉到底再回放 1/4，布面明顯變薄變窄', eg: '例：踝環繞、痛點 X 形' },
+    { max: 100, name: '拉到底(避免)', col: '#C44B2A', use: '不要使用！', how: '拉到底 100% 直接貼 → 失去彈性、最易拉傷皮膚', eg: '⚠ 易過敏、易撕傷，請勿使用' }
+  ];
+  function pick(v) { return levels.find(l => v <= l.max) || levels[levels.length - 1]; }
+  function updateTension() {
+    const v = +tSlider.value;
+    const L = pick(v);
+    document.getElementById('tPct').innerHTML = v + '<span>%</span>';
+    document.getElementById('tName').textContent = L.name;
+    document.getElementById('tName').style.color = L.col;
+    document.getElementById('tPct').style.color = L.col;
+    document.getElementById('tUse').textContent = L.use;
+    document.getElementById('tHow').textContent = L.how;
+    document.getElementById('tEg').textContent = L.eg;
+    document.getElementById('tCard').style.borderTopColor = L.col;
+  }
+  tSlider.addEventListener('input', updateTension);
+  updateTension();
+}
+
+// ===== 啟動 =====
+applyMode();
+if (!isMobile()) show(0);
+
+</script>
+</body>
+</html>
